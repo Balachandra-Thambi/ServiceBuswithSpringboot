@@ -1,5 +1,8 @@
-package com.example.ServiceBusTopicMessagesConsumerAutoForward;
+package com.example.SchedulingMessageConsumer;
 
+import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -18,55 +21,39 @@ import com.microsoft.azure.servicebus.SubscriptionClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 
+import lombok.extern.log4j.Log4j2;
 
+
+@Log4j2
 @Component
-public class AutoForwardTargetTopicConsumer {
+public class ScheduleMessagesConsumer implements Ordered {
 	
-
-
+    private ISubscriptionClient iSubscriptionClient ;
     private ISubscriptionClient iSubscriptionClient1 ;
-    private ISubscriptionClient iSubscriptionClient2 ;
-    private ISubscriptionClient iSubscriptionClient3 ;
-    private final Logger log = LoggerFactory.getLogger(AutoForwardTargetTopicConsumer.class);
+    private final Logger log = LoggerFactory.getLogger(ScheduleMessagesConsumer.class);
     private String connectionString = "Endpoint=sb://topicsinservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ny3fKCHs2eFllaAkmT4VUDw5F+r815o1P2ftwOhZLhI=";
-	
-    AutoForwardTargetTopicConsumer(){
-    try {
-		iSubscriptionClient1 = new SubscriptionClient(new ConnectionStringBuilder(connectionString,"autoforwardtargettopic/subscriptions/subscription1"), ReceiveMode.PEEKLOCK);
-		/*
-		 * iSubscriptionClient2 = new SubscriptionClient(new
-		 * ConnectionStringBuilder(connectionString,
-		 * "topicsgettingstarted/subscriptions/Subscription2"), ReceiveMode.PEEKLOCK);
-		 * iSubscriptionClient3 = new SubscriptionClient(new
-		 * ConnectionStringBuilder(connectionString,
-		 * "topicsgettingstarted/subscriptions/Subscription3"), ReceiveMode.PEEKLOCK);
-		 */
-	} catch (InterruptedException | ServiceBusException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-     }
-   
     
     
 	@EventListener(ApplicationReadyEvent.class)
     public void consume() throws Exception {
+    	iSubscriptionClient = new SubscriptionClient(new ConnectionStringBuilder(connectionString,"schedulingmessages/subscriptions/Subscription"), ReceiveMode.PEEKLOCK);
+        iSubscriptionClient1 = new SubscriptionClient(new ConnectionStringBuilder(connectionString,"schedulingmessages/subscriptions/Subscription1"), ReceiveMode.PEEKLOCK);
 
+    	recievingmessages(iSubscriptionClient);
     	recievingmessages(iSubscriptionClient1);
-    	//recievingmessages(iSubscriptionClient2);
-    	//recievingmessages(iSubscriptionClient3);
-    	    	
+    	
     }
 
     @SuppressWarnings("deprecation")
 	public void recievingmessages(ISubscriptionClient iSubscriptionClient) throws InterruptedException, ServiceBusException {
 
-
         iSubscriptionClient.registerMessageHandler(new IMessageHandler() {
 
             @Override
             public CompletableFuture<Void> onMessageAsync(IMessage message) {
-                log.info("received message " + new String(message.getBody()) + " with subscription " + iSubscriptionClient.getEntityPath());
+            	LocalTime timeafterrecieve = LocalTime.now();
+                log.info("received message " + new String(message.getBody()) + " with body ID " + message.getMessageId() + " at time " + timeafterrecieve);
+                log.info("Time after recieving messages - " + timeafterrecieve);
                 return CompletableFuture.completedFuture(null);
             }
             
@@ -75,9 +62,12 @@ public class AutoForwardTargetTopicConsumer {
                 log.error("eeks!", exception);
             }
         });
-        
-    
-    	
+	
     }
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+
 
 }

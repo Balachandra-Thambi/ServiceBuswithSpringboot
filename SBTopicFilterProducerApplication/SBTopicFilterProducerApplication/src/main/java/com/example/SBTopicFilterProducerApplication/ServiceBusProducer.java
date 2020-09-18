@@ -1,4 +1,4 @@
-package com.example.ServiceBusTopicMessagesProducer;
+package com.example.SBTopicFilterProducerApplication;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.servicebus.IMessage;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 @Log4j2
 @Component
 @RestController
-class ServiceBusProducer implements Ordered {
+class ServiceBusProducer {
 
     private final ITopicClient iTopicClient;
     private final Logger log = LoggerFactory.getLogger(ServiceBusProducer.class);
@@ -44,28 +44,28 @@ class ServiceBusProducer implements Ordered {
     }
     
     @SuppressWarnings("serial")
-	@PostMapping("/User")
-    public void producer(@RequestBody UserDetails user) throws Exception {
+	@PostMapping("/TopicFilter")
+    public void producer(@RequestBody Order order) throws Exception {
     	final String messageId = Integer.toString(12);
     	
-    	log.info("Username - " + user.getUserName());
-		log.info("Address - " + user.getUAddress());
-		log.info("State - " + user.getUstate());
+    	log.info("Color - " + order.getColor());
+		log.info("Quantity - " + order.getQuantity());
+		log.info("Priority - " + order.getPriority());
          
-    	IMessage message = new Message(GSON.toJson(user, UserDetails.class).getBytes(UTF_8));
+    	IMessage message = new Message(GSON.toJson(order, Order.class).getBytes(UTF_8));
         message.setContentType("application/json");
         message.setMessageId(messageId);
-        message.setProperties(new HashMap<String, Object>() {{
-            put("UserName", user.getUserName());
-            put("Address", user.getUAddress());
-            put("State", user.getUstate());
+        message.setCorrelationId(order.getPriority());
+        message.setLabel(order.getColor());
+        message.setProperties(new HashMap<String, Object>() {
+        	{
+            put("Color " , order.getColor());
+            put("Quantity " , Integer.toString(order.getQuantity()));
+            put("Priority " , order.getPriority());
             
-        }});
+        	}
+		});
+        
         iTopicClient.send(message);
-    }
- 
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
     }
 }

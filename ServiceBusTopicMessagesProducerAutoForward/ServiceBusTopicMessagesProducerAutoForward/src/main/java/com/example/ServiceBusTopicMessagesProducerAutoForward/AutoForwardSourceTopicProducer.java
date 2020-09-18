@@ -42,18 +42,18 @@ public class AutoForwardSourceTopicProducer {
     }
     
     @SuppressWarnings("serial")
-	@PostMapping("/User")
+	@PostMapping("/autoforward")
     public void producer(@RequestBody UserDetails user) throws Exception {
     	final String messageId = Integer.toString(12);
     	
     	log.info("Username - " + user.getUserName());
 		log.info("Address - " + user.getUAddress());
 		log.info("State - " + user.getUstate());
+		log.info("subscription - " + iTopicClient.getEntityPath());
          
     	IMessage message = new Message(GSON.toJson(user, UserDetails.class).getBytes(UTF_8));
         message.setContentType("application/json");
         message.setMessageId(messageId);
-        System.out.println("after scheduleMessageAsync");
         message.setProperties(new HashMap<String, Object>() {{
             put("UserName", user.getUserName());
             put("Address", user.getUAddress());
@@ -63,9 +63,4 @@ public class AutoForwardSourceTopicProducer {
         iTopicClient.send(message);
     }
  
-	/*
-	 * @Override public int getOrder() { return Ordered.LOWEST_PRECEDENCE; }
-	 */
-
-
 }
