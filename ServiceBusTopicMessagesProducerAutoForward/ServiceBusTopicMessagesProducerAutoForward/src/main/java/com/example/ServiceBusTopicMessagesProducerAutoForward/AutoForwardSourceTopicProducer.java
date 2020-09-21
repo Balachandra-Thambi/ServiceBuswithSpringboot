@@ -7,12 +7,14 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.servicebus.IMessage;
@@ -20,7 +22,7 @@ import com.microsoft.azure.servicebus.ITopicClient;
 import com.microsoft.azure.servicebus.Message;
 
 @Component
-@RestController
+@Controller
 public class AutoForwardSourceTopicProducer {
 	
 
@@ -41,14 +43,24 @@ public class AutoForwardSourceTopicProducer {
 		this.iTopicClient.send(message1);
     }
     
+    @GetMapping("/")
+    public ModelAndView Register(@ModelAttribute("userDetails") UserDetails user, Model model) {
+    	ModelAndView mv = new ModelAndView("Register");
+		
+		  if (user==null) { 
+			  model.addAttribute("userDetails",new UserDetails());
+		  }
+    	return mv;
+    	
+    }
     @SuppressWarnings("serial")
 	@PostMapping("/autoforward")
-    public void producer(@RequestBody UserDetails user) throws Exception {
+    public String producer(@ModelAttribute("userDetails") UserDetails user) throws Exception {
     	final String messageId = Integer.toString(12);
     	
     	log.info("Username - " + user.getUserName());
-		log.info("Address - " + user.getUAddress());
-		log.info("State - " + user.getUstate());
+		log.info("Address - " + user.getAddress());
+		log.info("State - " + user.getState());
 		log.info("subscription - " + iTopicClient.getEntityPath());
          
     	IMessage message = new Message(GSON.toJson(user, UserDetails.class).getBytes(UTF_8));
@@ -56,11 +68,12 @@ public class AutoForwardSourceTopicProducer {
         message.setMessageId(messageId);
         message.setProperties(new HashMap<String, Object>() {{
             put("UserName", user.getUserName());
-            put("Address", user.getUAddress());
-            put("State", user.getUstate());
+            put("Address", user.getAddress());
+            put("State", user.getState());
             
         }});
         iTopicClient.send(message);
+        return "Success";
     }
  
 }
