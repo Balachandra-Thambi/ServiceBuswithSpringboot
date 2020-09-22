@@ -19,23 +19,23 @@ input {
 	<form:form modelAttribute="order" action="/TopicFilter" method="post">
 		<table>
 			<tr>
-				<td>Product Name:</td>
+				<td style="height:30px">Product Name:</td>
 				<td><form:input path="name" /></td>
 			</tr>
 			<tr>
-				<td>Product Color:</td>
+				<td style="height:30px">Product Color:</td>
 				<td><form:input path="color" /></td>
 			</tr>
 			<tr>
-				<td>Product quantity:</td>
+				<td style="height:30px">Product quantity:</td>
 				<td><form:input path="quantity" /></td>
 			</tr>
 			<tr>
-				<td>Product priority:</td>
+				<td style="height:30px">Product priority:</td>
 				<td><form:input path="priority" /></td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="submit" value="Submit Order" /></td>
+				<td colspan="2" style="height:30px"><input type="submit" value="SubmitOrder" /></td>
 			</tr>
 		</table>
 	</form:form>

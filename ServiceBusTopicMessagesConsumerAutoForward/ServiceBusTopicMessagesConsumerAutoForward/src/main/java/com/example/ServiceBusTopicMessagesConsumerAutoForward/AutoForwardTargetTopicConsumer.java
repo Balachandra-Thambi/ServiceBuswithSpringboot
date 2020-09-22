@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import com.microsoft.azure.servicebus.ExceptionPhase;
@@ -25,27 +24,18 @@ public class AutoForwardTargetTopicConsumer {
 
 
     private ISubscriptionClient iSubscriptionClient1 ;
-    private ISubscriptionClient iSubscriptionClient2 ;
-    private ISubscriptionClient iSubscriptionClient3 ;
     private final Logger log = LoggerFactory.getLogger(AutoForwardTargetTopicConsumer.class);
     private String connectionString = "Endpoint=sb://topicsinservicebus.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ny3fKCHs2eFllaAkmT4VUDw5F+r815o1P2ftwOhZLhI=";
 	
-    AutoForwardTargetTopicConsumer(){
-    try {
-		iSubscriptionClient1 = new SubscriptionClient(new ConnectionStringBuilder(connectionString,"autoforwardtargettopic/subscriptions/subscription1"), ReceiveMode.PEEKLOCK);
-		/*
-		 * iSubscriptionClient2 = new SubscriptionClient(new
-		 * ConnectionStringBuilder(connectionString,
-		 * "topicsgettingstarted/subscriptions/Subscription2"), ReceiveMode.PEEKLOCK);
-		 * iSubscriptionClient3 = new SubscriptionClient(new
-		 * ConnectionStringBuilder(connectionString,
-		 * "topicsgettingstarted/subscriptions/Subscription3"), ReceiveMode.PEEKLOCK);
-		 */
-	} catch (InterruptedException | ServiceBusException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	AutoForwardTargetTopicConsumer() {
+		try {
+			iSubscriptionClient1 = new SubscriptionClient(
+					new ConnectionStringBuilder(connectionString, "autoforwardtargettopic/subscriptions/subscription1"),
+					ReceiveMode.PEEKLOCK);
+		} catch (InterruptedException | ServiceBusException e) {
+			e.printStackTrace();
+		}
 	}
-     }
    
     
     
@@ -53,9 +43,6 @@ public class AutoForwardTargetTopicConsumer {
     public void consume() throws Exception {
 
     	recievingmessages(iSubscriptionClient1);
-    	//recievingmessages(iSubscriptionClient2);
-    	//recievingmessages(iSubscriptionClient3);
-    	    	
     }
 
     @SuppressWarnings("deprecation")

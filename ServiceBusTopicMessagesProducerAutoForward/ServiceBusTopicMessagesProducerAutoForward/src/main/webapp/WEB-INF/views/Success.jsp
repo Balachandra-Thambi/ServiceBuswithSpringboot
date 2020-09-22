@@ -9,6 +9,6 @@
 <body>
 
 	<h2>Messages Auto forwarded Successfully to Azure Service Bus</h2>
-
+	<br><h4><a href="/">Register new user</a></h4>
 </body>
 </html>

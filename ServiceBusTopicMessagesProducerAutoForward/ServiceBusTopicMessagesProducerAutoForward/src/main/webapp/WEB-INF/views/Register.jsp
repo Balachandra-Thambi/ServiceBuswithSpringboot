@@ -6,26 +6,27 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Register New User</title>
 </head>
 <body>
+<h2>Register New User</h2>
 <form:form modelAttribute="userDetails" action="/autoforward" method="post">
       <table>
           <tr>
-              <td>First Name:</td>
+              <td style="height:30px">First Name:</td>
               <td><form:input path="userName" /></td>
           </tr>
           <tr>
-              <td>Address:</td>
+              <td style="height:30px">Address:</td>
               <td><form:input path="address" /></td>
           </tr>
           <tr>
-              <td>state:</td>
+              <td style="height:30px">state:</td>
               <td><form:input path="state" /></td>
           </tr>
           <tr>
-              <td colspan="2">
-                  <input type="submit" value="Submit" />
+              <td colspan="2" style="height:10px">
+                  <input type="submit" value="Register" />
               </td>
           </tr>
       </table>

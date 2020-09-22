@@ -6,9 +6,10 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Register New User</title>
 </head>
 <body>
+<h2>Register New User</h2>
 <form:form modelAttribute="userDetails" action="/SchedulingMessages" method="post">
       <table>
           <tr>
