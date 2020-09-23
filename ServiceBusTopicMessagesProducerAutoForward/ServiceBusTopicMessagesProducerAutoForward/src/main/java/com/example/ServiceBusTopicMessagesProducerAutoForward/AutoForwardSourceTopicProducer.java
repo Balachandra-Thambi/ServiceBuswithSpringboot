@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.servicebus.IMessage;
+import com.microsoft.azure.servicebus.IQueueClient;
 import com.microsoft.azure.servicebus.ITopicClient;
 import com.microsoft.azure.servicebus.Message;
 
@@ -28,6 +29,7 @@ public class AutoForwardSourceTopicProducer {
 
 
     private final ITopicClient iTopicClient;
+    IQueueClient iqueue;
     private final Logger log = LoggerFactory.getLogger(AutoForwardSourceTopicProducer.class);
     static final Gson GSON = new Gson();
 	

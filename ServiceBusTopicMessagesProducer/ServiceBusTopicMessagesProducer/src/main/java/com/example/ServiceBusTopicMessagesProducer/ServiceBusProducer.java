@@ -2,6 +2,7 @@ package com.example.ServiceBusTopicMessagesProducer;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.servicebus.IMessage;
+import com.microsoft.azure.servicebus.IQueueClient;
 import com.microsoft.azure.servicebus.ITopicClient;
 import com.microsoft.azure.servicebus.Message;
 
@@ -9,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -36,20 +38,23 @@ import java.util.HashMap;
 @Controller
 class ServiceBusProducer implements Ordered {
 
-    private final ITopicClient iTopicClient;
+	//@Autowired
+    private IQueueClient iqueue;
     private final Logger log = LoggerFactory.getLogger(ServiceBusProducer.class);
     static final Gson GSON = new Gson();
 	
-    ServiceBusProducer(ITopicClient iTopicClient) {
-		this.iTopicClient = iTopicClient;
+   
+    ServiceBusProducer(IQueueClient iq) {
+		this.iqueue = iq;
 	}
+    
     
     @SuppressWarnings("deprecation")
 	@PostMapping("/messages")
     public void produce(@RequestParam String message) throws Exception {
     	Message message1 = new Message(message);
 		message1.setScheduledEnqueuedTimeUtc(Clock.systemUTC().instant().plusSeconds(120));
-		this.iTopicClient.send(message1);
+		this.iqueue.send(message1);
     }
     
     @GetMapping("/")
@@ -82,7 +87,7 @@ class ServiceBusProducer implements Ordered {
             put("State", user.getState());
             
         }});
-        iTopicClient.send(message);
+        iqueue.send(message);
         return "Success";
     }
  
